@@ -32,12 +32,127 @@ Create a HTML file to implement form based input and output.
 Publish the website in the given URL.
 
 ## PROGRAM :
+math.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Power Calculator</title>
+    <style>
+        body {
+    background-color: red;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.container {
+    background-color: blue;
+    border: 5px dashed green;
+    width: 400px;
+    padding: 30px;
+    margin: 100px auto;
+    color: white;
+    border-radius: 10px;
+}
+
+h1 {
+    color: pink;
+}
+
+input[type="text"] {
+    width: 100px;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+input[type="submit"] {
+    padding: 5px 15px;
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+input[type="submit"]:hover {
+    background-color: lightgray;
+}
+
+    </style>
+</head>
+<body>
+    <h1>Incandescent Bulb Power Calculator</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="current">Current (I) in Amps:</label>
+        <input type="text" id="current" name="current" required><br><br>
+
+        <label for="resistance">Resistance (R) in Ohms:</label>
+        <input type="text" id="resistance" name="resistance" required><br><br>
+
+        <input type="submit" value="Calculate Power">
+    </form>
+
+    {% if result is not None %}
+        <h2>Power (P) = {{ result }} Watts</h2>
+    {% endif %}
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+</body>
+</html>
+
+
+views.py 
+
+from django.shortcuts import render
+
+def calculate_power(request):
+    result = None
+    error = None
+
+    if request.method == 'POST':
+        try:
+            current = float(request.POST.get('current'))
+            resistance = float(request.POST.get('resistance'))
+            power = (current ** 2) * resistance
+            result = round(power, 2)
+        except (ValueError, TypeError):
+            error = "Invalid input. Please enter valid numbers."
+
+    return render(request, 'mathapp/math.html', {'result': result, 'error': error})
+
+
+
+mathapp/urls.py
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.calculate_power, name='calculate_power'),
+]
+
+
+
+mathproject/urls.py
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('mathapp.urls')),
+]
 
 
 ## SERVER SIDE PROCESSING:
+<img width="926" height="494" alt="Screenshot 2026-01-01 221521" src="https://github.com/user-attachments/assets/7f7ea53a-4848-4c71-9ccc-6fcc648e6957" />
 
 
 ## HOMEPAGE:
+<img width="747" height="284" alt="Screenshot 2026-01-01 221542" src="https://github.com/user-attachments/assets/ba9d5940-0244-405d-8e42-a5037d01af1d" />
 
 
 ## RESULT:
